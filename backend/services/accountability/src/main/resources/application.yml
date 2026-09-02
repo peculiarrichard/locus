@@ -1,6 +1,12 @@
 spring:
   application:
     name: accountability-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/accountability_db
+    username: ${DB_USERNAME:accountability_service}
+    password: ${DB_PASSWORD:accountability_service_local}
+  flyway:
+    enabled: true
 
 server:
   port: 8086
