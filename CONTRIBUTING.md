@@ -19,11 +19,13 @@ Practical, condensed engineering rules for this repo.
 ## Commits & branches
 
 - Conventional Commits (`type(scope): subject`).
-- Branches: `feature/<ticket>-short-desc`, `fix/<ticket>-short-desc`, `chore/<desc>`.
+- Branches: `feature/<ticket>-short-desc`, `fix/<ticket>-short-desc`, `chore/<desc>`, branched off `dev`.
 - Small, atomic commits. No agent/bot identity in commit messages.
+- `main` is production only — never branch off it directly, never push to it directly. `dev` is the active integration branch; `main` only advances via a `dev` → `main` PR when a release is being cut.
 
 ## Pull requests
 
+- PR target is always `dev`, never `main` directly.
 - Keep PRs under ~400 LOC where practical. Describe intent and testing in the body.
 - Review criteria: correctness, tests, security, readability, backwards compatibility, performance.
 - This is presently a single-operator project — self-review plus the automated CI gate (tests, lint, secret/vulnerability scans) substitutes for a second reviewer.
