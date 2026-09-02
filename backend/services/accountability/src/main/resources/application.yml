@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: accountability-service
+
+server:
+  port: 8086

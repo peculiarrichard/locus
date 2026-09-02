@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: distraction-service
+
+server:
+  port: 8083
