@@ -18,10 +18,18 @@ node_modules/
 frontend/release/
 frontend/out/
 
+# Test artifacts
+frontend/test-results/
+frontend/playwright-report/
+frontend/coverage/
+
 # IDE
 .vscode/
 .idea/
 *.iml
+
+# Claude Code local session state
+.claude/
 
 # OS
 .DS_Store

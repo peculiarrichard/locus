@@ -2,9 +2,11 @@ package com.locus.goal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 // Entry point for the Goal and Plan Service — manages study goals, milestones, and deadlines.
 @SpringBootApplication
+@EnableScheduling
 public class GoalServiceApplication {
 
   public static void main(String[] args) {

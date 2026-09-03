@@ -20,3 +20,16 @@ CREATE DATABASE accountability_db OWNER accountability_service;
 
 CREATE USER notification_service WITH PASSWORD 'notification_service_local';
 CREATE DATABASE notification_db OWNER notification_service;
+
+-- Postgres grants CONNECT on every database to PUBLIC by default, so without this every one of
+-- the 7 service users above could still open a connection to (and enumerate the schema of) every
+-- other service's database, even though table-level grants already block reading actual rows —
+-- found during Phase 12's security review. Table ownership already implies CONNECT for the owner,
+-- so revoking PUBLIC's grant per database is sufficient; no per-owner GRANT needed.
+REVOKE CONNECT ON DATABASE auth_db FROM PUBLIC;
+REVOKE CONNECT ON DATABASE session_db FROM PUBLIC;
+REVOKE CONNECT ON DATABASE distraction_db FROM PUBLIC;
+REVOKE CONNECT ON DATABASE goal_db FROM PUBLIC;
+REVOKE CONNECT ON DATABASE analytics_db FROM PUBLIC;
+REVOKE CONNECT ON DATABASE accountability_db FROM PUBLIC;
+REVOKE CONNECT ON DATABASE notification_db FROM PUBLIC;

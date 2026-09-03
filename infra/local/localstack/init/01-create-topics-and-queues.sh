@@ -52,6 +52,9 @@ EVENTS=(
   "accountability-partner-activity-update:notification"
   "user-profile-updated:notification,analytics"
   "user-deleted:session,distraction,goal,analytics,accountability,notification"
+  # Local stand-in for a real SES bounce/complaint SNS subscription (Part 2 infra) — lets
+  # Notification Service's bounce-handling consumer be built and tested locally now.
+  "ses-bounce-notification:notification"
 )
 
 for entry in "${EVENTS[@]}"; do

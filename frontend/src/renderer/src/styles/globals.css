@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* design-spec.md §2 — dark is the default theme; light is opted into via .light on :root. */
+:root {
+  --background: #0b0f14;
+  --surface: #12181f;
+  --surface-raised: #1a2129;
+  --border: #232b34;
+  --text-primary: #e6eaee;
+  --text-secondary: #9aa5b1;
+  --text-muted: #6b7684;
+  --accent: #6c8ef5;
+  --accent-hover: #7d9cf7;
+  --accent-subtle: #1c2438;
+  --success: #4fa97e;
+  --warning: #d9a94e;
+  --danger: #d9706a;
+  --info: #5aa8c4;
+}
+
+:root.light {
+  --background: #f7f8fa;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --border: #e2e6ea;
+  --text-primary: #1a2129;
+  --text-secondary: #5c6773;
+  --text-muted: #8a93a0;
+  --accent: #4a6fe0;
+  --accent-hover: #3d5fcb;
+  --accent-subtle: #eaeefc;
+  --success: #2f8f5b;
+  --warning: #b8862e;
+  --danger: #c0463d;
+  --info: #2e7c99;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  margin: 0;
+}
