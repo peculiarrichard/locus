@@ -1,0 +1,17 @@
+appId: com.locus.app
+productName: Locus
+directories:
+  buildResources: resources
+files:
+  - '!**/.vscode/*'
+  - '!src/*'
+  - '!electron.vite.config.{js,ts,mjs,cjs}'
+  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+afterPack: scripts/flip-fuses.mjs
+asar: true
+win:
+  target: nsis
+mac:
+  target: dmg
+linux:
+  target: AppImage

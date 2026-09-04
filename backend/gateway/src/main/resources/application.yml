@@ -1,6 +1,155 @@
 spring:
   application:
     name: gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${AUTH_SERVICE_JWKS_URI:http://localhost:8081/.well-known/jwks.json}
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: 10s
+          globalcors:
+            cors-configurations:
+              "[/**]":
+                # app://locus is the packaged build's custom scheme; localhost:5173 is electron-vite
+                # dev's renderer origin — both must be allowed for local development to work at all.
+                allowedOrigins:
+                  - "${ELECTRON_APP_ORIGIN:app://locus}"
+                  - "${LOCUS_DEV_RENDERER_ORIGIN:http://localhost:5173}"
+                allowedMethods: [GET, POST, PATCH, PUT, DELETE, OPTIONS]
+                allowedHeaders: "*"
+          default-filters:
+            - name: RequestSize
+              args:
+                maxSize: 2MB
+          routes:
+            # Public auth routes: per-IP rate limiting, no bearer token required. Listed before the
+            # catch-all auth/users route below since Gateway matches routes in declared order and
+            # these paths are a subset of that broader pattern — most specific first.
+            - id: auth-service-public
+              uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+              predicates:
+                - Path=/api/v1/auth/register,/api/v1/auth/login,/api/v1/auth/mfa/challenge,/api/v1/auth/refresh,/api/v1/auth/verify-email,/api/v1/auth/verify-email/resend,/api/v1/auth/password-reset/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: authServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: auth-service
+              uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+              predicates:
+                - Path=/api/v1/auth/**,/api/v1/users/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: authServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: session-service
+              uri: ${SESSION_SERVICE_URI:http://localhost:8082}
+              predicates:
+                - Path=/api/v1/sessions/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: sessionServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: distraction-service
+              uri: ${DISTRACTION_SERVICE_URI:http://localhost:8083}
+              predicates:
+                - Path=/api/v1/distractions/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: distractionServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: goal-service
+              uri: ${GOAL_SERVICE_URI:http://localhost:8084}
+              predicates:
+                - Path=/api/v1/goals/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: goalServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: analytics-service
+              uri: ${ANALYTICS_SERVICE_URI:http://localhost:8085}
+              predicates:
+                - Path=/api/v1/analytics/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: analyticsServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: accountability-service
+              uri: ${ACCOUNTABILITY_SERVICE_URI:http://localhost:8086}
+              predicates:
+                - Path=/api/v1/accountability/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: accountabilityServiceCB
+                    fallbackUri: forward:/gateway/fallback
+            - id: notification-service
+              uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8087}
+              predicates:
+                - Path=/api/v1/notifications/**
+              filters:
+                - StripPrefix=2
+                - name: CircuitBreaker
+                  args:
+                    name: notificationServiceCB
+                    fallbackUri: forward:/gateway/fallback
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 20
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 5
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
 
 server:
   port: 8080
+  max-http-request-header-size: 16KB
+
+locus:
+  gateway:
+    rate-limit:
+      per-ip:
+        limit: 10
+        window-seconds: 60
+      per-user:
+        limit: 100
+        window-seconds: 60
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
