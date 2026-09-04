@@ -2,7 +2,7 @@
 
 # Multi-stage build for one backend module; build with --build-arg MODULE=<path> --build-arg ARTIFACT=<artifact-id> and context=backend/.
 
-FROM maven:3.9-eclipse-temurin-25 AS build
+FROM maven:3-eclipse-temurin-26 AS build
 ARG MODULE
 WORKDIR /app
 COPY pom.xml pom.xml
