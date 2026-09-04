@@ -7,6 +7,35 @@ spring:
     password: ${DB_PASSWORD:accountability_service_local}
   flyway:
     enabled: true
+  jpa:
+    open-in-view: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${AUTH_SERVICE_JWKS_URI:http://localhost:8081/.well-known/jwks.json}
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:us-east-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:test}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+      sns:
+        endpoint: ${AWS_SNS_ENDPOINT:http://localhost:4566}
+      sqs:
+        endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
 
 server:
   port: 8086
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never

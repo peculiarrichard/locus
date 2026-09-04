@@ -3,6 +3,7 @@ package com.locus.gateway.config;
 import com.locus.gateway.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity.AuthorizeExchangeSpec;
@@ -29,6 +30,10 @@ public class SecurityConfig {
   }
 
   private static void allowPublicPathsOnly(AuthorizeExchangeSpec exchange) {
-    exchange.pathMatchers(PUBLIC_PATHS).permitAll().anyExchange().authenticated();
+    // A CORS preflight is always an OPTIONS request carrying no Authorization header — without this,
+    // every authenticated route's preflight gets a 401 from this filter chain before globalcors'
+    // CorsWebFilter ever gets a chance to answer it, breaking the real request that would follow.
+    exchange.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll().pathMatchers(PUBLIC_PATHS).permitAll()
+        .anyExchange().authenticated();
   }
 }

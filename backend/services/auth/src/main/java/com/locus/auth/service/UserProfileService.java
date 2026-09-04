@@ -14,8 +14,8 @@ import com.locus.auth.repository.UserRepository;
 import com.locus.auth.web.dto.DeviceResponse;
 import com.locus.auth.web.dto.ProfileResponse;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -78,7 +78,9 @@ public class UserProfileService {
     user.setDisplayName(null);
     user.setTimezone(null);
     user.setStatus(UserStatus.DISABLED);
-    user.setRoles(Set.of());
+    // A mutable empty set, not Set.of() — Hibernate's merge needs to manage this collection's
+    // contents in place, which fails against an immutable collection instance.
+    user.setRoles(new HashSet<>());
     userRepository.save(user);
     mfaSecretRepository.deleteById(userId);
     refreshTokenRepository.findByUserIdAndRevokedAtIsNull(userId).forEach(rt -> {

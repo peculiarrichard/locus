@@ -20,7 +20,11 @@ spring:
           globalcors:
             cors-configurations:
               "[/**]":
-                allowedOrigins: "${ELECTRON_APP_ORIGIN:app://locus}"
+                # app://locus is the packaged build's custom scheme; localhost:5173 is electron-vite
+                # dev's renderer origin — both must be allowed for local development to work at all.
+                allowedOrigins:
+                  - "${ELECTRON_APP_ORIGIN:app://locus}"
+                  - "${LOCUS_DEV_RENDERER_ORIGIN:http://localhost:5173}"
                 allowedMethods: [GET, POST, PATCH, PUT, DELETE, OPTIONS]
                 allowedHeaders: "*"
           default-filters:

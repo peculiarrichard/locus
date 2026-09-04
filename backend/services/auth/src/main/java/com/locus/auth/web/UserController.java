@@ -35,7 +35,7 @@ public class UserController {
   }
 
   @PatchMapping("/users/me")
-  public void updateProfile(@AuthenticationPrincipal Jwt jwt, @RequestBody ProfileUpdateRequest request) {
+  public void updateProfile(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody ProfileUpdateRequest request) {
     userProfileService.updateProfile(UUID.fromString(jwt.getSubject()), request.displayName(), request.timezone());
   }
 

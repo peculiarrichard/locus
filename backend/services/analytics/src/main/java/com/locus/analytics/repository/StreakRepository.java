@@ -1,0 +1,8 @@
+package com.locus.analytics.repository;
+
+import com.locus.analytics.domain.Streak;
+import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StreakRepository extends JpaRepository<Streak, UUID> {
+}
