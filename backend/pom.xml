@@ -22,7 +22,7 @@
     <java.version>25</java.version>
     <spring-cloud.version>2025.1.2</spring-cloud.version>
     <spring-cloud-aws.version>4.0.0</spring-cloud-aws.version>
-    <testcontainers.version>1.21.3</testcontainers.version>
+    <testcontainers.version>2.0.5</testcontainers.version>
     <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
   </properties>
 
